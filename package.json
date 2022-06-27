@@ -1,0 +1,27 @@
+{
+  "name": "spring",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielgstephenson/spring.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielgstephenson/spring/issues"
+  },
+  "homepage": "https://github.com/danielgstephenson/spring#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "matter-js": "^0.18.0",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {
+    "standard": "^17.0.0"
+  }
+}
