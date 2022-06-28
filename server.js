@@ -59,26 +59,32 @@ function makePlayer (id) {
   const player = { id }
   const core = state.cores.find(c => !c.active)
   if (core) {
-    const sign = 2 * core.team - 3
     player.core = core
-    Matter.Body.setPosition(core.body, { x: 0, y: 800 * sign })
-    Matter.Body.setVelocity(core.body, { x: 0, y: 0 })
-    core.playerId = id
-    core.active = true
-    core.birth = engine.timing.timestamp
-    core.age = 0
-    const guard = core.guard
-    player.guard = guard
-    Matter.Body.setPosition(guard.body, { x: 0, y: 800 * sign })
-    Matter.Body.setVelocity(guard.body, { x: 0, y: 0 })
-    guard.playerId = id
-    guard.active = true
-    guard.birth = engine.timing.timestamp
-    guard.age = 0
+    player.guard = core.guard
+    spawn(core)
   }
   player.connected = true
   state.players[id] = player
   return player
+}
+
+function spawn (core) {
+  const sign = 2 * core.team - 3
+  Matter.Body.setPosition(core.body, { x: 0, y: 800 * sign })
+  Matter.Body.setVelocity(core.body, { x: 0, y: 0 })
+  core.playerId = id
+  core.active = true
+  core.alive = true
+  core.birth = engine.timing.timestamp
+  core.age = 0
+  const guard = core.guard
+  Matter.Body.setPosition(guard.body, { x: 0, y: 800 * sign })
+  Matter.Body.setVelocity(guard.body, { x: 0, y: 0 })
+  guard.playerId = id
+  guard.active = true
+  guard.alive = true
+  guard.birth = engine.timing.timestamp
+  guard.age = 0
 }
 
 async function updateClients () {
