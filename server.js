@@ -16,6 +16,8 @@ if (config.secure) {
 const server = config.secure ? https.createServer(options, app) : http.Server(app)
 const io = config.secure ? socketIo(server, options) : socketIo(server)
 
+function range (n) { return [...Array(n).keys()] }
+
 const state = {
   actors: [],
   cores: [],
@@ -60,6 +62,7 @@ function makePlayer (id) {
   const core = state.cores.find(c => !c.active)
   if (core) spawn(core, player)
   player.connected = true
+  player.alive = true
   state.players[id] = player
   return player
 }
@@ -98,6 +101,7 @@ async function updateClients () {
         radius: core.body.circleRadius,
         team: core.team,
         active: core.active,
+        alive: core.alive,
         playerId: core.playerId,
         guardId: core.guard.id,
         age: core.age
@@ -112,6 +116,7 @@ async function updateClients () {
         radius: guard.body.circleRadius,
         team: guard.team,
         active: guard.active,
+        alive: guard.alive,
         playerId: guard.playerId
       }
     })
@@ -136,6 +141,7 @@ function makeWall (x, y, width, height) {
   const wall = {}
   wall.role = 'wall'
   wall.active = true
+  wall.alive = true
   wall.body = Matter.Bodies.rectangle(x, y, width, height, { isStatic: true })
   state.bodies.push(wall.body)
   state.actors[wall.body.id] = wall
@@ -146,7 +152,8 @@ function makeWall (x, y, width, height) {
 
 function makeCore (team) {
   const core = {}
-  core.body = Matter.Bodies.circle(0, 0, 30)
+  const sign = 2 * team - 3
+  core.body = Matter.Bodies.circle(0, 800 * sign, 30)
   core.body.label = 'core'
   core.body.frictionAir = 0.01
   core.force = { x: 0, y: 0 }
@@ -159,7 +166,7 @@ function makeCore (team) {
   core.alive = true
   core.playerId = ''
   const guard = {}
-  guard.body = Matter.Bodies.circle(0, 0, 20)
+  guard.body = Matter.Bodies.circle(0, 800 * sign, 20)
   guard.body.label = 'guard'
   guard.body.frictionAir = 0.01
   state.bodies.push(guard.body)
@@ -188,8 +195,10 @@ makeWall(size + 0.5 * wallThickness, 0, wallThickness, 2 * size + 2 * wallThickn
 makeWall(-size - 0.5 * wallThickness, 0, wallThickness, 2 * size + 2 * wallThickness)
 makeWall(0, 0.5 * size, 1.0 * size, wallThickness)
 makeWall(0, -0.5 * size, 1.0 * size, wallThickness)
-makeCore(1)
-makeCore(2)
+range(5).forEach(i => {
+  makeCore(1)
+  makeCore(2)
+})
 Matter.Composite.add(engine.world, state.bodies)
 Matter.Runner.run(runner, engine)
 
@@ -214,10 +223,17 @@ Matter.Events.on(engine, 'collisionStart', e => {
     ]
     orderings.forEach(ordering => {
       const labels = ordering.map(body => body.label)
-      if (labels[0] === 'core' && labels[1] === 'core') {
-        pair.isActive = false
-      }
-      if (labels[0] === 'core' && labels[1] === 'guard') {
+      const actors = ordering.map(body => state.actors[body.id])
+      const alive = actors[0].alive && actors[1].alive
+      const active = actors[0].active && actors[1].active
+      if (alive && active) {
+        if (labels[0] === 'core' && labels[1] === 'core') {
+          pair.isActive = false
+        }
+        if (labels[0] === 'core' && labels[1] === 'guard') {
+          pair.isActive = false
+        }
+      } else {
         pair.isActive = false
       }
     })
