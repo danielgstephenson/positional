@@ -58,29 +58,27 @@ io.on('connection', socket => {
 function makePlayer (id) {
   const player = { id }
   const core = state.cores.find(c => !c.active)
-  if (core) {
-    player.core = core
-    player.guard = core.guard
-    spawn(core)
-  }
+  if (core) spawn(core, player)
   player.connected = true
   state.players[id] = player
   return player
 }
 
-function spawn (core) {
+function spawn (core, player) {
+  player.core = core
   const sign = 2 * core.team - 3
   Matter.Body.setPosition(core.body, { x: 0, y: 800 * sign })
   Matter.Body.setVelocity(core.body, { x: 0, y: 0 })
-  core.playerId = id
+  core.playerId = player.id
   core.active = true
   core.alive = true
   core.birth = engine.timing.timestamp
   core.age = 0
   const guard = core.guard
+  player.guard = guard
   Matter.Body.setPosition(guard.body, { x: 0, y: 800 * sign })
   Matter.Body.setVelocity(guard.body, { x: 0, y: 0 })
-  guard.playerId = id
+  guard.playerId = player.id
   guard.active = true
   guard.alive = true
   guard.birth = engine.timing.timestamp
