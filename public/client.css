@@ -15,7 +15,6 @@ canvas {
   background: black;
   image-rendering: auto;
   margin: auto;
-  display: none;
 }
 #loginDiv {
   width: 100vw;
@@ -62,6 +61,8 @@ canvas {
   position: absolute;
   opacity: 0;
   display: none;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 #nameInput {
   background-color: #222222;

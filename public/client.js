@@ -107,14 +107,12 @@ socket.on('updateClient', msg => {
   state.id = msg.id
   state.safeTime = msg.safeTime
   if (msg.joined) {
-    canvas.style.display = 'block'
     deathDiv.style.display = 'block'
     gameOverDiv.style.display = 'block'
-    scoreDiv.style.display = 'block'
+    scoreDiv.style.display = 'flex'
     scoreDiv.style.opacity = '1'
     loginDiv.style.display = 'none'
   } else {
-    canvas.style.display = 'none'
     deathDiv.style.display = 'none'
     gameOverDiv.style.display = 'none'
     scoreDiv.style.display = 'none'
