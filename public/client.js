@@ -370,9 +370,10 @@ function showScores (team) {
     table.style.color = color
     table.style.width = `${width}vmin`
     table.style.border = '0vmin solid white'
-    table.style.borderSpacing = `${0.02 * width}vmin ${0.02 * width}vmin`
-    table.style.fontSize = `${0.09 * width}vmin`
+    table.style.borderSpacing = '1vmin 1vmin'
+    table.style.fontSize = '1vmin'
     table.style.tableLayout = 'fixed'
+    table.style.display = 'block'
     table.style.opacity = 1
   }
 }
