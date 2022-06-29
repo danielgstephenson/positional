@@ -14,15 +14,16 @@ canvas {
   border: 0px solid white;
   background: black;
   image-rendering: auto;
-  margin: auto;
 }
 #grid1 {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr 1fr;
+  font-size: 5vmin;
 }
 #grid2 {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr 1fr;
+  font-size: 5vmin;
 }
 #loginDiv {
   width: 100vw;

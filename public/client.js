@@ -305,6 +305,7 @@ window.onwheel = function (e) {
 function range (n) { return [...Array(n).keys()] }
 
 function showScores (team) {
+  /*
   const grid = team === 1 ? grid1 : grid2
   grid.innerHTML = ''
   range(5).forEach(i => {
@@ -312,6 +313,7 @@ function showScores (team) {
     cell.innerHTML = i
     grid.appendChild(cell)
   })
+  */
 
   /*
   const table = team === 1 ? table1 : table2
