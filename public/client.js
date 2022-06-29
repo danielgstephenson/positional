@@ -353,8 +353,8 @@ function showScores (team) {
     cell2.style.textAlign = 'center'
     cell2.style.border = '0vmin solid white'
     cell2.style.overflow = 'hidden'
-    cell1.style.width = `${0.7 * width}vmin`
-    cell2.style.width = `${0.3 * width}vmin`
+    cell1.style.width = '1vmin'
+    cell2.style.width = '1vmin'
     const text2 = document.createTextNode(state.msg.scores[team - 1])
     cell2.appendChild(text2)
     if (team === 1) {
