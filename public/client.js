@@ -5,7 +5,7 @@ const deathDiv = document.getElementById('deathDiv')
 const loginDiv = document.getElementById('loginDiv')
 const joinButton = document.getElementById('joinButton')
 const nameInput = document.getElementById('nameInput')
-const scoreDiv = document.getElementById('scoreDiv')
+const gameDiv = document.getElementById('gameDiv')
 const grid1 = document.getElementById('grid1')
 const grid2 = document.getElementById('grid2')
 const gameOverDiv = document.getElementById('gameOverDiv')
@@ -109,14 +109,14 @@ socket.on('updateClient', msg => {
   if (msg.joined) {
     deathDiv.style.display = 'block'
     gameOverDiv.style.display = 'block'
-    scoreDiv.style.display = 'flex'
-    scoreDiv.style.opacity = '1'
+    gameDiv.style.display = 'flex'
+    gameDiv.style.opacity = '1'
     loginDiv.style.display = 'none'
   } else {
     deathDiv.style.display = 'none'
     gameOverDiv.style.display = 'none'
-    scoreDiv.style.display = 'none'
-    scoreDiv.style.opacity = '1'
+    gameDiv.style.display = 'none'
+    gameDiv.style.opacity = '1'
     loginDiv.style.display = 'block'
   }
   if (state.alive && !state.gameOver) {

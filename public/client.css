@@ -64,7 +64,7 @@ canvas {
   opacity: 0;
   display: none;
 }
-#scoreDiv {
+#gameDiv {
   width: 100vw;
   height: 100vh;
   font-size: 8vmin;
