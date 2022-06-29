@@ -18,12 +18,18 @@ canvas {
 #grid1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  font-size: 5vmin;
+  grid-gap: 1vmin 5vmin;
+  height: 0vh;
+  font-size: 4vh;
+  color: DeepSkyBlue
 }
 #grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  font-size: 5vmin;
+  grid-gap: 1vmin 5vmin;
+  height: 0vh;
+  font-size: 4vh;
+  color: SpringGreen
 }
 #loginDiv {
   width: 100vw;

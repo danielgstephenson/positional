@@ -302,18 +302,27 @@ window.onwheel = function (e) {
   camera.zoom -= 0.001 * e.deltaY
 }
 
-function range (n) { return [...Array(n).keys()] }
+// function range (n) { return [...Array(n).keys()] }
 
 function showScores (team) {
-  /*
   const grid = team === 1 ? grid1 : grid2
   grid.innerHTML = ''
-  range(5).forEach(i => {
-    const cell = document.createElement('div')
-    cell.innerHTML = i
-    grid.appendChild(cell)
-  })
-  */
+  if (state.msg.players) {
+    const players = state.msg.players.filter(player => {
+      const active = player.connected && player.joined
+      const scored = player.score > 0
+      const onTeam = player.team === team
+      return (active || scored) && onTeam
+    })
+    players.forEach(player => {
+      const cell1 = document.createElement('div')
+      cell1.innerHTML = player.name
+      grid.appendChild(cell1)
+      const cell2 = document.createElement('div')
+      cell2.innerHTML = player.score
+      grid.appendChild(cell2)
+    })
+  }
 
   /*
   const table = team === 1 ? table1 : table2
