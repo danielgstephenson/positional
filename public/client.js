@@ -320,18 +320,18 @@ function showScores (team) {
       const row = document.createElement('tr')
       const cell1 = document.createElement('td')
       cell1.style.textAlign = 'center'
-      cell1.style.border = '0vmin solid white'
+      cell1.style.border = '1px solid white'
       cell1.style.overflow = 'hidden'
       const text1 = document.createTextNode(player.name)
       cell1.appendChild(text1)
       const cell2 = document.createElement('td')
       cell2.style.textAlign = 'center'
-      cell2.style.border = '0vmin solid white'
+      cell2.style.border = '1px solid white'
       cell2.style.overflow = 'hidden'
       const text2 = document.createTextNode(player.score)
       cell2.appendChild(text2)
-      cell1.style.width = '1vmin'
-      cell2.style.width = '1vmin'
+      cell1.style.width = '3vmin'
+      cell2.style.width = '3vmin'
       if (team === 1) {
         row.appendChild(cell1)
         row.appendChild(cell2)
@@ -345,16 +345,14 @@ function showScores (team) {
     const row = document.createElement('tr')
     const cell1 = document.createElement('td')
     cell1.style.textAlign = 'center'
-    cell1.style.border = '0vmin solid white'
+    cell1.style.border = '1px solid white'
     cell1.style.overflow = 'hidden'
     const text1 = document.createTextNode('TOTAL')
     cell1.appendChild(text1)
     const cell2 = document.createElement('td')
     cell2.style.textAlign = 'center'
-    cell2.style.border = '0vmin solid white'
+    cell2.style.border = '1px solid white'
     cell2.style.overflow = 'hidden'
-    cell1.style.width = '1vmin'
-    cell2.style.width = '1vmin'
     const text2 = document.createTextNode(state.msg.scores[team - 1])
     cell2.appendChild(text2)
     if (team === 1) {
@@ -368,10 +366,9 @@ function showScores (team) {
     tbody.appendChild(row)
     table.appendChild(tbody)
     table.style.color = color
-    table.style.width = `${width}vmin`
-    table.style.border = '0vmin solid white'
+    table.style.border = '1px solid white'
     table.style.borderSpacing = '1vmin 1vmin'
-    table.style.fontSize = '5px'
+    table.style.fontSize = '5pt'
     table.style.tableLayout = 'fixed'
     table.style.display = 'block'
     table.style.opacity = 1
