@@ -220,6 +220,10 @@ function drawCore (core) {
     context.beginPath()
     context.arc(core.ix - camera.x, core.iy - camera.y, core.radius, 0, 2 * Math.PI)
     context.fill()
+    context.strokeStyle = 'Red'
+    context.beginPath()
+    context.arc(core.x - camera.x, core.y - camera.y, core.radius, 0, 2 * Math.PI)
+    context.stroke()
   }
 }
 
