@@ -24,7 +24,13 @@ const state = {
   guards: [],
   walls: [],
   bodies: [],
-  players: {}
+  players: {},
+  safeTime: 4000,
+  scores: [0, 0],
+  goal: 1000,
+  gameOver: false,
+  countdown: 9,
+  dt: 0
 }
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -38,12 +44,21 @@ io.on('connection', socket => {
   const player = makePlayer(socket.id)
   socket.on('disconnect', (reason) => {
     player.connected = false
-    if (player.core) player.core.active = false
-    if (player.guard) player.guard.active = false
+    detach(player)
+  })
+  socket.on('joinGame', msg => {
+    const player = state.players[msg.id]
+    player.joined = true
+    const core = state.cores.find(c => !c.active)
+    if (core) {
+      attach(player, core)
+      // spawn(core)
+    }
   })
   socket.on('updateServer', msg => {
     const player = state.players[msg.id]
     if (player) {
+      player.name = msg.name
       const vector = { x: 0, y: 0 }
       if (msg.input.up) vector.y += -1
       if (msg.input.down) vector.y += 1
@@ -51,47 +66,138 @@ io.on('connection', socket => {
       if (msg.input.right) vector.x += 1
       const direction = Matter.Vector.normalise(vector)
       if (player.core) {
-        player.core.force = Matter.Vector.mult(direction, 0.001)
+        if (player.core.alive) player.core.force = Matter.Vector.mult(direction, 0.001)
+        else if (msg.respawn) {
+          player.alive = true
+          spawn(player.core)
+        }
       }
     }
   })
 })
 
+function attach (player, core) {
+  const guard = core.guard
+  core.player = player
+  guard.player = player
+  core.playerId = player.id
+  guard.playerId = player.id
+  core.active = true
+  guard.active = true
+  player.core = core
+  player.guard = guard
+  player.team = core.team
+}
+
+function detach (player) {
+  if (player.core) {
+    const core = player.core
+    const guard = core.guard
+    core.player = null
+    guard.player = null
+    core.playerId = null
+    guard.playerId = null
+    core.active = false
+    guard.active = false
+  }
+  player.core = null
+  player.guard = null
+}
+
 function makePlayer (id) {
   const player = { id }
-  const core = state.cores.find(c => !c.active)
-  if (core) spawn(core, player)
   player.connected = true
   player.alive = true
+  player.score = 0
+  player.team = 0
+  player.name = ''
+  player.joined = false
   state.players[id] = player
   return player
 }
 
-function spawn (core, player) {
-  player.core = core
+function spawn (core) {
   const sign = 2 * core.team - 3
-  Matter.Body.setPosition(core.body, { x: 0, y: 800 * sign })
+  Matter.Body.setPosition(core.body, { x: 0, y: 1700 * sign })
   Matter.Body.setVelocity(core.body, { x: 0, y: 0 })
-  core.playerId = player.id
-  core.active = true
   core.alive = true
   core.birth = engine.timing.timestamp
   core.age = 0
   const guard = core.guard
-  player.guard = guard
-  Matter.Body.setPosition(guard.body, { x: 0, y: 800 * sign })
+  Matter.Body.setPosition(guard.body, { x: 0, y: 1700 * sign })
   Matter.Body.setVelocity(guard.body, { x: 0, y: 0 })
-  guard.playerId = player.id
-  guard.active = true
   guard.alive = true
   guard.birth = engine.timing.timestamp
   guard.age = 0
 }
 
+function die (core) {
+  core.alive = false
+  core.guard.alive = false
+  core.player.alive = false
+  Matter.Body.setVelocity(core.body, { x: 0, y: 0 })
+  Matter.Body.setVelocity(core.guard.body, { x: 0, y: 0 })
+}
+
+function setCentral () {
+  state.cores.forEach(core => { core.distFromCenter = Matter.Vector.magnitude(core.body.position) })
+  const liveCores = state.cores.filter(core => core.alive && core.active)
+  const distArray = liveCores.map(core => core.distFromCenter)
+  const minDist = Math.min(900, ...distArray)
+  state.cores.forEach(core => {
+    core.central = core.alive && core.active && core.distFromCenter <= minDist
+  })
+}
+
+function countScores () {
+  state.scores = [0, 0]
+  Object.values(state.players).forEach(player => {
+    state.scores[player.team - 1] += Math.round(player.score)
+  })
+  if (Math.max(...state.scores) >= state.goal && !state.gameOver) {
+    state.gameOver = true
+    state.countdown = 9
+  }
+  if (state.gameOver && state.countdown <= 0) {
+    startGame()
+  }
+}
+
+function startGame () {
+  Object.values(state.players).forEach(player => {
+    player.score = 0
+    player.joined = false
+    player.alive = true
+    detach(player)
+  })
+  state.cores.forEach(core => spawn(core))
+  state.gameOver = false
+}
+
 async function updateClients () {
   const sockets = await io.fetchSockets()
+  setCentral()
+  countScores()
   sockets.forEach(socket => {
-    const msg = {}
+    const player = state.players[socket.id]
+    const msg = {
+      alive: player.alive,
+      safeTime: state.safeTime,
+      joined: player.joined,
+      scores: state.scores,
+      gameOver: state.gameOver,
+      countdown: Math.round(state.countdown)
+    }
+    msg.players = Object.values(state.players).map(player => {
+      return {
+        id: player.id,
+        joined: player.joined,
+        connected: player.connected,
+        name: player.name,
+        team: player.team,
+        score: Math.round(player.score)
+      }
+    })
     msg.cores = state.cores.map(core => {
       return {
         id: core.id,
@@ -102,6 +208,7 @@ async function updateClients () {
         team: core.team,
         active: core.active,
         alive: core.alive,
+        central: core.central,
         playerId: core.playerId,
         guardId: core.guard.id,
         age: core.age
@@ -124,7 +231,8 @@ async function updateClients () {
       return {
         id: actor.id,
         role: 'wall',
-        vertices: actor.body.vertices.map(({ x, y }) => ({ x, y }))
+        vertices: actor.body.vertices.map(({ x, y }) => ({ x, y })),
+        joined: state.joined
       }
     })
     msg.id = socket.id
@@ -153,7 +261,7 @@ function makeWall (x, y, width, height) {
 function makeCore (team) {
   const core = {}
   const sign = 2 * team - 3
-  core.body = Matter.Bodies.circle(0, 800 * sign, 30)
+  core.body = Matter.Bodies.circle(0, 1700 * sign, 30)
   core.body.label = 'core'
   core.body.frictionAir = 0.01
   core.force = { x: 0, y: 0 }
@@ -164,9 +272,11 @@ function makeCore (team) {
   core.team = team
   core.active = false
   core.alive = true
+  core.central = false
+  core.distFromCenter = Matter.Vector.magnitude(core.body.position)
   core.playerId = ''
   const guard = {}
-  guard.body = Matter.Bodies.circle(0, 800 * sign, 20)
+  guard.body = Matter.Bodies.circle(0, 1700 * sign, 20)
   guard.body.label = 'guard'
   guard.body.frictionAir = 0.01
   state.bodies.push(guard.body)
@@ -187,14 +297,16 @@ function makeCore (team) {
 const engine = Matter.Engine.create()
 engine.gravity = { x: 0, y: 0 }
 const runner = Matter.Runner.create()
-const wallThickness = 50
 const size = 1000
-makeWall(0, size + 0.5 * wallThickness, 2 * size + 2 * wallThickness, wallThickness)
-makeWall(0, -size - 0.5 * wallThickness, 2 * size + 2 * wallThickness, wallThickness)
-makeWall(size + 0.5 * wallThickness, 0, wallThickness, 2 * size + 2 * wallThickness)
-makeWall(-size - 0.5 * wallThickness, 0, wallThickness, 2 * size + 2 * wallThickness)
-makeWall(0, 0.5 * size, 1.0 * size, wallThickness)
-makeWall(0, -0.5 * size, 1.0 * size, wallThickness)
+const H = 2 * size
+const W = 1 * size
+const Z = 50
+makeWall(0, H + 0.5 * Z, 2 * W + 2 * Z, Z)
+makeWall(0, -H - 0.5 * Z, 2 * W + 2 * Z, Z)
+makeWall(W + 0.5 * Z, 0, Z, 2 * H + 2 * Z)
+makeWall(-W - 0.5 * Z, 0, Z, 2 * H + 2 * Z)
+makeWall(0, 0.6 * H, 1.0 * W, Z)
+makeWall(0, -0.6 * H, 1.0 * W, Z)
 range(5).forEach(i => {
   makeCore(1)
   makeCore(2)
@@ -203,9 +315,16 @@ Matter.Composite.add(engine.world, state.bodies)
 Matter.Runner.run(runner, engine)
 
 Matter.Events.on(engine, 'afterUpdate', e => {
+  state.dt = engine.timing.lastDelta / 1000
+  if (state.gameOver) {
+    state.countdown = Math.max(0, state.countdown += -state.dt)
+  }
   state.cores.forEach(core => {
     Matter.Body.applyForce(core.body, core.body.position, core.force)
     core.age = engine.timing.timestamp - core.birth
+    if (core.player && core.central && !state.gameOver) {
+      core.player.score += 10 * state.dt
+    }
   })
   state.guards.forEach(guard => {
     const vector = Matter.Vector.sub(guard.core.body.position, guard.body.position)
@@ -227,11 +346,20 @@ Matter.Events.on(engine, 'collisionStart', e => {
       const alive = actors[0].alive && actors[1].alive
       const active = actors[0].active && actors[1].active
       if (alive && active) {
-        if (labels[0] === 'core' && labels[1] === 'core') {
-          pair.isActive = false
-        }
         if (labels[0] === 'core' && labels[1] === 'guard') {
           pair.isActive = false
+          const core = actors[0]
+          const guard = actors[1]
+          const enemy = core.team !== guard.team
+          const unsafe = core.age > state.safeTime
+          if (enemy && unsafe) {
+            die(core)
+            if (guard.player && core.player) {
+              const transfer = 0.5 * core.player.score
+              guard.player.score += transfer
+              core.player.score += -transfer
+            }
+          }
         }
       } else {
         pair.isActive = false

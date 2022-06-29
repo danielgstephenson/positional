@@ -14,12 +14,28 @@ canvas {
   border: 0px solid white;
   background: black;
   image-rendering: auto;
+  margin: auto;
+  display: none;
+}
+#loginDiv {
+  width: 100vw;
+  height: 40vh;
+  padding-top: 10vh;
+  font-size: 8vmin;
+  font-weight: bold;
+  font-family: Tahoma;
+  border: 0px solid white;
+  user-select: none;
+  color: white;
+  margin: 0px;
+  z-index: 9;
+  position: absolute;
+  opacity: 1;
 }
 .notification {
   width: 100vw;
   height: 40vh;
   padding-top: 10vh;
-  font-size: 10vmin;
   font-size: 8vmin;
   font-weight: bold;
   font-family: Tahoma;
@@ -30,4 +46,42 @@ canvas {
   z-index: 9;
   position: absolute;
   opacity: 0;
+  display: none;
+}
+#scoreDiv {
+  width: 100vw;
+  height: 100vh;
+  font-size: 8vmin;
+  font-weight: bold;
+  font-family: Tahoma;
+  border: 0px solid white;
+  user-select: none;
+  color: white;
+  margin: 0px;
+  z-index: 9;
+  position: absolute;
+  opacity: 0;
+  display: none;
+}
+#nameInput {
+  background-color: #222222;
+  width: 60vmin;
+  color: white;
+  font-size: 7vmin;
+  padding: 2vmin;
+}
+#joinButton {
+  background-color: #222222; 
+  border: none;
+  color: white;
+  font-size: 8vmin;
+  padding: 3vmin 5vmin;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  outline: 2px solid white;
+  border-radius: 2vmin;
+}
+#joinButton:hover {
+  outline: 4px solid white;
 }

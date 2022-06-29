@@ -8,7 +8,23 @@
     <link rel="icon" href="circle.ico">
   </head>
   <body style="background-color:#131111;">
-    <canvas id="canvas" width="800" height="800"></canvas>    
+    <div id="loginDiv">
+      <label>Name:</label> <input id="nameInput" type="text" maxlength="10"></input><br><br>
+      <button id="joinButton"">Join Game</button>
+    </div>
+    <div id="deathDiv" class="notification"> 
+      <p style="color:rgb(185,0,0)">CORE DESTROYED</p>
+      space to respawn 
+    </div>
+    <div id="gameOverDiv" class="notification"> 
+      <p id="victoryMessage">Tie Game</p>
+      <p id="countdownMessage">Next Game in 9</p> 
+    </div>
+    <div id="scoreDiv">  
+      <table id="table1" style="float: left"></table>
+      <table id="table2" style="float: right"></table>
+    </div> 
+    <canvas id="canvas" width="800" height="800"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script> 
     <script src="client.js"></script>
   </body>
