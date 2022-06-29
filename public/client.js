@@ -322,6 +322,12 @@ function showScores (team) {
       cell2.innerHTML = player.score
       grid.appendChild(cell2)
     })
+    const cell1 = document.createElement('div')
+    cell1.innerHTML = 'TOTAL'
+    grid.appendChild(cell1)
+    const cell2 = document.createElement('div')
+    cell2.innerHTML = state.msg.scores[team - 1]
+    grid.appendChild(cell2)
   }
 
   /*

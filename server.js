@@ -52,7 +52,7 @@ io.on('connection', socket => {
     const core = state.cores.find(c => !c.active)
     if (core) {
       attach(player, core)
-      // spawn(core)
+      spawn(core)
     }
   })
   socket.on('updateServer', msg => {

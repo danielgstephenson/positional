@@ -17,6 +17,7 @@ canvas {
 }
 #grid1 {
   display: grid;
+  padding-top: 3vh;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1vmin 5vmin;
   height: 0vh;
@@ -25,6 +26,7 @@ canvas {
 }
 #grid2 {
   display: grid;
+  padding-top: 3vh;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1vmin 5vmin;
   height: 0vh;
