@@ -176,8 +176,8 @@ function interpolate (actor) {
     actor.iy = actor.y
   }
   if (actor.role === 'core' && actor.playerId === state.id) {
-    camera.x = actor.ix
-    camera.y = actor.iy
+    camera.x = actor.x
+    camera.y = actor.y
   }
 }
 
@@ -220,10 +220,6 @@ function drawCore (core) {
     context.beginPath()
     context.arc(core.ix - camera.x, core.iy - camera.y, core.radius, 0, 2 * Math.PI)
     context.fill()
-    context.strokeStyle = 'Red'
-    context.beginPath()
-    context.arc(core.x - camera.x, core.y - camera.y, core.radius, 0, 2 * Math.PI)
-    context.stroke()
   }
 }
 
@@ -267,7 +263,7 @@ function drawArena () {
 
 function draw () {
   window.requestAnimationFrame(draw)
-  state.lerp = Math.max(0, Math.min(1, (Date.now() - state.frameTime) / 40))
+  state.lerp = 1 // Math.max(0, Math.min(1, (Date.now() - state.frameTime) / 40))
   state.frameTime = Date.now()
   setupCamera()
   const w = canvas.width / camera.scale * 100
