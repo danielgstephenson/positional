@@ -371,7 +371,7 @@ function showScores (team) {
     table.style.width = `${width}vmin`
     table.style.border = '0vmin solid white'
     table.style.borderSpacing = '1vmin 1vmin'
-    table.style.fontSize = '1px'
+    table.style.fontSize = '5px'
     table.style.tableLayout = 'fixed'
     table.style.display = 'block'
     table.style.opacity = 1
