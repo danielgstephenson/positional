@@ -6,8 +6,8 @@ const loginDiv = document.getElementById('loginDiv')
 const joinButton = document.getElementById('joinButton')
 const nameInput = document.getElementById('nameInput')
 const scoreDiv = document.getElementById('scoreDiv')
-const table1 = document.getElementById('table1')
-const table2 = document.getElementById('table2')
+const grid1 = document.getElementById('grid1')
+const grid2 = document.getElementById('grid2')
 const gameOverDiv = document.getElementById('gameOverDiv')
 const victoryMessage = document.getElementById('victoryMessage')
 const countdownMessage = document.getElementById('countdownMessage')
@@ -302,7 +302,18 @@ window.onwheel = function (e) {
   camera.zoom -= 0.001 * e.deltaY
 }
 
+function range (n) { return [...Array(n).keys()] }
+
 function showScores (team) {
+  const grid = team === 1 ? grid1 : grid2
+  grid.innerHTML = ''
+  range(5).forEach(i => {
+    const cell = document.createElement('div')
+    cell.innerHTML = i
+    grid.appendChild(cell)
+  })
+
+  /*
   const table = team === 1 ? table1 : table2
   const color = team === 1 ? 'DeepSkyBlue' : 'SpringGreen'
   const width = Math.max(0, window.innerWidth - window.innerHeight) / 4
@@ -373,4 +384,5 @@ function showScores (team) {
     table.style.display = 'block'
     table.style.opacity = 1
   }
+  */
 }

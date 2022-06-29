@@ -16,6 +16,14 @@ canvas {
   image-rendering: auto;
   margin: auto;
 }
+#grid1 {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+#grid2 {
+  display: grid;
+  grid-template-columns: auto auto;
+}
 #loginDiv {
   width: 100vw;
   height: 40vh;
