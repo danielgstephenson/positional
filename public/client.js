@@ -330,8 +330,8 @@ function showScores (team) {
       cell2.style.overflow = 'hidden'
       const text2 = document.createTextNode(player.score)
       cell2.appendChild(text2)
-      cell1.style.width = `${0.7 * width}vmin`
-      cell2.style.width = `${0.3 * width}vmin`
+      cell1.style.width = '1vmin'
+      cell2.style.width = '1vmin'
       if (team === 1) {
         row.appendChild(cell1)
         row.appendChild(cell2)
