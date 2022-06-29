@@ -141,10 +141,12 @@ socket.on('updateClient', msg => {
     if (score1 > score2) {
       victoryMessage.style.color = 'DodgerBlue'
       victoryMessage.innerText = 'Blue Wins'
-    }
-    if (score2 > score1) {
+    } else if (score2 > score1) {
       victoryMessage.style.color = 'LimeGreen'
       victoryMessage.innerText = 'Green Wins'
+    } else {
+      victoryMessage.style.color = 'White'
+      victoryMessage.innerText = 'Tie Game'
     }
     deathDiv.style.opacity = 0
     gameOverDiv.style.opacity = 1
@@ -291,7 +293,7 @@ nameInput.onkeydown = function (e) { if (e.key === 'Enter') joinGame() }
 
 window.onkeydown = function (e) {
   controls.forEach(c => { if (e.key === c.key) input[c.input] = true })
-  if (input.select && !state.alive) state.respawn = true
+  if (input.select && !state.alive && !state.gameOver) state.respawn = true
 }
 
 window.onkeyup = function (e) {
@@ -301,8 +303,6 @@ window.onkeyup = function (e) {
 window.onwheel = function (e) {
   camera.zoom -= 0.001 * e.deltaY
 }
-
-// function range (n) { return [...Array(n).keys()] }
 
 function showScores (team) {
   const grid = team === 1 ? grid1 : grid2
@@ -329,77 +329,4 @@ function showScores (team) {
     cell2.innerHTML = state.msg.scores[team - 1]
     grid.appendChild(cell2)
   }
-
-  /*
-  const table = team === 1 ? table1 : table2
-  const color = team === 1 ? 'DeepSkyBlue' : 'SpringGreen'
-  const width = Math.max(0, window.innerWidth - window.innerHeight) / 4
-  table.innerHTML = ''
-  if (state.msg.players) {
-    const players = state.msg.players.filter(player => {
-      const active = player.connected && player.joined
-      const scored = player.score > 0
-      const onTeam = player.team === team
-      return (active || scored) && onTeam
-    })
-    players.sort((a, b) => b.score - a.score)
-    const tbody = document.createElement('tbody')
-    players.forEach(player => {
-      const row = document.createElement('tr')
-      const cell1 = document.createElement('td')
-      cell1.style.textAlign = 'center'
-      cell1.style.border = '1px solid white'
-      cell1.style.overflow = 'hidden'
-      const text1 = document.createTextNode(player.name)
-      cell1.appendChild(text1)
-      const cell2 = document.createElement('td')
-      cell2.style.textAlign = 'center'
-      cell2.style.border = '1px solid white'
-      cell2.style.overflow = 'hidden'
-      const text2 = document.createTextNode(player.score)
-      cell2.appendChild(text2)
-      cell1.style.width = '3vmin'
-      cell2.style.width = '3vmin'
-      if (team === 1) {
-        row.appendChild(cell1)
-        row.appendChild(cell2)
-      }
-      if (team === 2) {
-        row.appendChild(cell2)
-        row.appendChild(cell1)
-      }
-      tbody.appendChild(row)
-    })
-    const row = document.createElement('tr')
-    const cell1 = document.createElement('td')
-    cell1.style.textAlign = 'center'
-    cell1.style.border = '1px solid white'
-    cell1.style.overflow = 'hidden'
-    const text1 = document.createTextNode('TOTAL')
-    cell1.appendChild(text1)
-    const cell2 = document.createElement('td')
-    cell2.style.textAlign = 'center'
-    cell2.style.border = '1px solid white'
-    cell2.style.overflow = 'hidden'
-    const text2 = document.createTextNode(state.msg.scores[team - 1])
-    cell2.appendChild(text2)
-    if (team === 1) {
-      row.appendChild(cell1)
-      row.appendChild(cell2)
-    }
-    if (team === 2) {
-      row.appendChild(cell2)
-      row.appendChild(cell1)
-    }
-    tbody.appendChild(row)
-    table.appendChild(tbody)
-    table.style.color = color
-    table.style.border = '1px solid white'
-    table.style.borderSpacing = '1vmin 1vmin'
-    table.style.fontSize = '5pt'
-    table.style.tableLayout = 'fixed'
-    table.style.display = 'block'
-    table.style.opacity = 1
-  }
-  */
 }

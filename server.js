@@ -320,17 +320,21 @@ Matter.Events.on(engine, 'afterUpdate', e => {
     state.countdown = Math.max(0, state.countdown += -state.dt)
   }
   state.cores.forEach(core => {
-    Matter.Body.applyForce(core.body, core.body.position, core.force)
-    core.age = engine.timing.timestamp - core.birth
+    if (core.alive && !state.gameOver) {
+      Matter.Body.applyForce(core.body, core.body.position, core.force)
+      core.age = engine.timing.timestamp - core.birth
+    }
     if (core.player && core.central && !state.gameOver) {
       core.player.score += 10 * state.dt
     }
   })
   state.guards.forEach(guard => {
-    const vector = Matter.Vector.sub(guard.core.body.position, guard.body.position)
-    const force = Matter.Vector.mult(vector, 0.000003)
-    Matter.Body.applyForce(guard.body, guard.body.position, force)
-    guard.age = engine.timing.timestamp - guard.birth
+    if (guard.alive && !state.gameOver) {
+      const vector = Matter.Vector.sub(guard.core.body.position, guard.body.position)
+      const force = Matter.Vector.mult(vector, 0.000003)
+      Matter.Body.applyForce(guard.body, guard.body.position, force)
+      guard.age = engine.timing.timestamp - guard.birth
+    }
   })
 })
 
@@ -352,7 +356,7 @@ Matter.Events.on(engine, 'collisionStart', e => {
           const guard = actors[1]
           const enemy = core.team !== guard.team
           const unsafe = core.age > state.safeTime
-          if (enemy && unsafe) {
+          if (enemy && unsafe && core.alive && !state.gameOver) {
             die(core)
             if (guard.player && core.player) {
               const transfer = 0.5 * core.player.score
